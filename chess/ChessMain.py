@@ -13,7 +13,7 @@ IMAGES = {}
 
 
 
-# Initialize a global dictionart or images
+# Initialize a global dictionary or images
 
 def loadImages():
     pieces = [ 'wP' , 'wR' , 'wN' , 'wB' , 'wK' , 'wQ' ,'bP' ,'bR', 'bN' , 'bB' , 'bK' , 'bQ']
@@ -27,9 +27,11 @@ def main():
     clock = p.time.Clock()
     screen.fill(p.Color("white"))
     gs = ChessEngine.GameState()
-    loadImages()
+    validMoves = gs.getValidMoves()
+    moveMade = False
 
-    running = True;
+    loadImages()
+    running = True
     sqSelected = ()
     playerClicks = []
     while running:
@@ -49,9 +51,20 @@ def main():
                 if len(playerClicks) == 2:
                     move = ChessEngine.Move(playerClicks[0], playerClicks[1] , gs.board)
                     print(move.getChessNotation())
-                    gs.makeMove(move)
+                    if move in validMoves:
+                        gs.makeMove(move)
+                        moveMade = True
                     sqSelected = ()
                     playerClicks = []
+
+            elif e.type == p.KEYDOWN:
+                if e.key == p.K_z:
+                    gs.undoMove()
+                    moveMade = True
+
+        if moveMade:
+            validMoves = gs.getValidMoves()
+            moveMade = False
 
 
         drawGameState(screen , gs)
@@ -86,3 +99,4 @@ def drawPieces(screen , board):
 
 if __name__ == "__main__":
     main()
+
